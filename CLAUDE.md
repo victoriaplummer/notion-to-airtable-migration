@@ -58,11 +58,23 @@ For each database, in dependency order:
 
 ## Key Rules
 
+### CRITICAL: Never Hallucinate Data
+
+- **NEVER invent, guess, or fabricate field values.** Every value written to Airtable MUST come from an actual Notion MCP tool response.
+- **If you didn't fetch a record, you don't have its data.** Do not fill in values from memory, pattern-matching, or assumptions about what the data "probably" looks like.
+- **Fetch EVERY record before writing it.** If you fetched 2 out of 10 records, you can only migrate those 2. The other 8 must be fetched in a subsequent call — not guessed.
+- **If a fetch fails or is incomplete, say so.** Write "FETCH FAILED" or skip the record. Never substitute made-up data.
+- **Prefer an empty field over a wrong field.** A missing value can be fixed. A hallucinated value looks correct and silently corrupts the dataset.
+- **When reporting results, only report what you actually did.** If you migrated 2 records, say "2 of 10 migrated — need to fetch remaining 8." Do not present invented data as migrated.
+
+### Other Rules
+
 - **Never lose data silently.** Every record ends up migrated, failed (with reason), or skipped (with reason).
 - **Save state after every batch.** If I interrupt you, you should be able to resume from `state/`.
 - **Process file-heavy databases FIRST.** Notion signed URLs expire.
 - **10 records max per Airtable create call.** Rate limit: 5 req/sec/base. Add small delays.
 - **Airtable tool flow**: search_bases → list_tables_for_base → get_table_schema → then read/write records. Always discover IDs first.
+- **Paginate fully.** Don't stop at the first page of results. Always check for `has_more` / `next_cursor` / `offset` and keep fetching until all records are retrieved.
 
 ## Property Type Mapping (Quick Reference)
 
