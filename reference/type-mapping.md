@@ -15,7 +15,8 @@
 | `url` | `url` | Direct. |
 | `email` | `email` | Direct. |
 | `phone_number` | `phoneNumber` | Direct. |
-| `people` | `multilineText` | Store as "Name (email), Name (email)". Users don't transfer between platforms. |
+| `people` | `singleLineText` | Store user names as plain text. Notion user IDs don't map to Airtable collaborators — just extract the display name. |
+| `button` | `button` | Airtable has a button field type — create it with the same label. **The action won't transfer.** Notion buttons trigger automations; you'll need to manually configure the Airtable button's action (open URL or run automation) after migration. |
 | `files` | `multipleAttachments` | Pass as `[{url, filename}]`. **⚠️ Notion-hosted URLs expire in ~1 hour!** |
 | `unique_id` | `singleLineText` | Store as "PREFIX-NUMBER" text to preserve the prefix. |
 | `verification` | `checkbox` | Map verified → true, unverified → false. |

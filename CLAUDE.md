@@ -78,7 +78,8 @@ For each database, in dependency order:
 | checkbox | checkbox | |
 | url / email / phone | url / email / phoneNumber | |
 | files | multipleAttachments | ⚠️ URLs expire! |
-| people | multilineText | Users don't transfer |
+| people | singleLineText | Store user names as plain text. Notion user IDs don't map to Airtable collaborators. |
+| button | button | Airtable has a button field type — create it with the same label. Note: Notion buttons trigger automations/actions that won't transfer. The button will exist in Airtable but you'll need to configure its action (URL or automation) manually. |
 | relation | linked records | Phase 4 only |
 | rollup | rollup | Manual after relations |
 | formula | formula | Must rewrite syntax |
