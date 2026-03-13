@@ -67,13 +67,48 @@ For each database, in dependency order:
 - **Prefer an empty field over a wrong field.** A missing value can be fixed. A hallucinated value looks correct and silently corrupts the dataset.
 - **When reporting results, only report what you actually did.** If you migrated 2 records, say "2 of 10 migrated — need to fetch remaining 8." Do not present invented data as migrated.
 
+### CRITICAL: Be Fast — Minimize Tool Calls
+
+Every tool call costs time. The migration should be **as few calls as possible**.
+
+**Read instructions ONCE at the start.** Read CLAUDE.md and config.json in your first turn. Never re-read reference files mid-migration — you already have the type mapping in the quick reference table above.
+
+**Don't search when you can fetch directly.** If you already have a database ID or URL, use `fetch` directly. Don't run `search` first to "find" something you already know.
+
+**Fetch ALL records in one call.** Use the maximum page size. Don't fetch 2 records at a time — fetch all of them, then paginate only if there are more pages.
+
+**Batch writes at the maximum.** Always send 10 records per `create_records_for_table` call. Never send 1 or 2 at a time.
+
+**Parallelize when possible.** If you need to fetch schemas for 3 databases, do all 3 in one turn — don't do them sequentially across 3 turns.
+
+**Optimal tool call sequence for a single-table migration:**
+
+```
+Turn 1: Read CLAUDE.md + config.json (already done if CoWork loaded the folder)
+Turn 2: Fetch the Notion database schema + list Airtable tables (parallel)
+Turn 3: Fetch ALL Notion records (one call, max page size)
+Turn 4: Create the Airtable table
+Turn 5: Create all records in batches of 10
+Turn 6: Verify counts
+```
+
+That's 5-6 turns for a complete single-table migration. If it's taking more than that, you're doing redundant work.
+
+**For multi-table migrations**, the sequence per table is:
+1. Fetch schema (if not already fetched in Phase 1)
+2. Fetch all records
+3. Create table + push records
+4. Repeat for next table
+
+Don't re-search the workspace between tables. Don't re-read config between tables. Don't re-discover the Airtable base ID between tables.
+
 ### Other Rules
 
 - **Never lose data silently.** Every record ends up migrated, failed (with reason), or skipped (with reason).
 - **Save state after every batch.** If I interrupt you, you should be able to resume from `state/`.
 - **Process file-heavy databases FIRST.** Notion signed URLs expire.
 - **10 records max per Airtable create call.** Rate limit: 5 req/sec/base. Add small delays.
-- **Airtable tool flow**: search_bases → list_tables_for_base → get_table_schema → then read/write records. Always discover IDs first.
+- **Airtable tool flow**: search_bases → list_tables_for_base → get_table_schema → then read/write records. Always discover IDs first. **But only do this discovery ONCE per migration, not per table.**
 - **Paginate fully.** Don't stop at the first page of results. Always check for `has_more` / `next_cursor` / `offset` and keep fetching until all records are retrieved.
 
 ## Property Type Mapping (Quick Reference)
