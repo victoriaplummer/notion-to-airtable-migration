@@ -24,7 +24,7 @@ Notion rich text includes bold, italic, strikethrough, code, color, links. Airta
 Notion status has groups (To-do, In progress, Complete). Airtable `singleSelect` is flat — groups are lost. Options transfer fine, just no grouping.
 
 ## People Fields
-Notion `people` references workspace users by ID. Airtable collaborator fields reference different users. Store as plain text (display names).
+Notion `people` properties return a user object with both an ID and a display name. **Just use the `name` field — ignore the user ID entirely.** Store as plain text in a `singleLineText` field. Don't try to map Notion user IDs to Airtable collaborators.
 
 ## Button Fields
 Both Notion and Airtable have button fields. The field transfers, but the **action** (automation trigger, URL) does NOT. Must configure the button's action manually in Airtable after migration.

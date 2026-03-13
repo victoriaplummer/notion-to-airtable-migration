@@ -22,7 +22,7 @@ Use this mapping when creating Airtable tables from Notion database schemas.
 | `url` | `url` | Direct. |
 | `email` | `email` | Direct. |
 | `phone_number` | `phoneNumber` | Direct. |
-| `people` | `singleLineText` | Store display names as plain text. Notion user IDs don't map to Airtable collaborators. |
+| `people` | `singleLineText` | Extract the `name` field from each user object. Ignore user IDs entirely. Just store the display name as plain text. |
 | `button` | `button` | Create with same label. Action won't transfer — must configure manually. |
 | `files` | `multipleAttachments` | Pass as `[{url, filename}]`. **Notion-hosted URLs expire in ~1 hour!** |
 | `unique_id` | `singleLineText` | Preserve as "PREFIX-NUMBER" text. |
