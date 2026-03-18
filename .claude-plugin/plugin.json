@@ -1,0 +1,8 @@
+{
+  "name": "notion-to-airtable",
+  "version": "1.0.0",
+  "description": "Migrate your Notion workspace to Airtable. Audit databases, create matching tables, transfer records, and wire relations — all through conversation.",
+  "author": {
+    "name": "victoriaplummer"
+  }
+}

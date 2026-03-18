@@ -1,49 +1,68 @@
-# Notion → Airtable Migration
+# Notion → Airtable Migration Plugin
 
-A project folder that turns [Claude CoWork](https://claude.ai) into a Notion → Airtable migration agent using MCP tools.
+Migrate your Notion workspace to Airtable through conversation. Audit databases, create matching tables, transfer records, wire relations, and verify — all from Cowork.
 
-## Quick Start
+## Installation
 
-1. **Connect** — Claude Desktop → Settings → Integrations → add Notion + Airtable (OAuth)
-2. **Configure** — Edit `config.json` with your Airtable base ID
-3. **Run** — CoWork tab → select this folder → tell Claude: *"Read CLAUDE.md, then start Phase 1"*
+### Cowork
+Browse plugins in the Customize menu → Install "Notion to Airtable".
 
-See [START.md](START.md) for detailed setup instructions.
+Or upload this plugin file directly.
 
-## What's Inside
+### Claude Code
+```bash
+claude plugin install victoriaplummer/notion-to-airtable-migration
+```
 
-| File | Purpose |
+## Commands
+
+| Command | What It Does |
 |---|---|
-| `CLAUDE.md` | Agent instructions — Claude reads this as its system prompt |
-| `config.json` | Your settings — Airtable base ID, migration options |
-| `START.md` | Human-readable setup guide |
-| `reference/type-mapping.md` | Complete Notion → Airtable property type mapping |
-| `state/` | Migration progress saved here (JSON files for resume) |
-| `output/` | Reports written here (audit, progress, verification) |
+| `/migrate` | Run the full migration: audit → create tables → transfer records → wire relations → verify |
+| `/audit` | Just audit your Notion workspace — see what's there before committing to a migration |
+| `/verify` | Verify a completed migration — count checks, spot checks, remaining manual work |
+
+## Skills
+
+Domain knowledge Claude uses automatically during migration:
+
+| Skill | What It Does |
+|---|---|
+| `type-mapping` | Converts Notion property types to Airtable field types |
+| `edge-cases` | Handles file URL expiry, batch failures, date ranges, and other gotchas |
+| `formula-conversion` | Suggests Airtable formula equivalents for Notion formulas |
 
 ## How It Works
 
-Both Notion and Airtable have official remote MCP servers with pre-built Claude connectors:
+1. **You say:** `/migrate`
+2. **Claude asks:** Which Airtable base to migrate into
+3. **Claude audits:** Discovers all your Notion databases and schemas
+4. **You choose:** Which databases to migrate
+5. **Claude migrates:** Creates tables, transfers records, wires relations
+6. **Claude verifies:** Counts, spot-checks, and reports what needs manual work
 
-- **Notion**: `https://mcp.notion.com/mcp` (OAuth)
-- **Airtable**: `https://mcp.airtable.com/mcp` (OAuth)
+Both Notion and Airtable connect via OAuth — no API tokens needed.
 
-Claude reads `CLAUDE.md` for migration instructions, connects to both platforms via MCP, and executes a 5-phase migration:
+## Connectors
 
-1. **Audit** — Discover all Notion databases and schemas
-2. **Create Tables** — Build matching Airtable tables with correct field types
-3. **Migrate Records** — Extract, transform, and batch-load all records
-4. **Wire Relations** — Connect cross-table linked records using ID mapping
-5. **Verify** — Compare counts, spot-check values, list remaining manual work
+This plugin uses two MCP connectors:
 
-## Resuming After Interruption
+| Service | URL | Auth |
+|---|---|---|
+| Notion | `https://mcp.notion.com/mcp` | OAuth |
+| Airtable | `https://mcp.airtable.com/mcp` | OAuth |
 
-Migration state is saved to the `state/` folder after every batch. If interrupted:
+You'll be prompted to sign in when first used. See CONNECTORS.md for details.
 
-```
-Read CLAUDE.md for your instructions. Check the state/ folder
-to see what's already been done, then resume from where you left off.
-```
+## What Transfers vs. What Doesn't
+
+| Transfers automatically | Needs manual work after |
+|---|---|
+| Text, numbers, dates, checkboxes | Formula fields (different syntax) |
+| Select/multi-select with options | Rollup fields (configure after relations) |
+| Relations (linked records) | Button actions (field exists, action doesn't) |
+| File attachments | Views (filters, sorts, grouping) |
+| Status options (groups flatten) | Automations |
 
 ## License
 
